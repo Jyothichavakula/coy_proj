@@ -1,0 +1,262 @@
+const dns = require("node:dns");
+dns.setServers(["8.8.8.8", "8.8.4.4"]);
+const mongoose = require("mongoose");
+require("dotenv").config();
+
+const Profile = require("./models/Profile");
+const Swipe = require("./models/Swipe");
+
+const profiles = [
+  {
+    name: "Aarav",
+    age: 23,
+    bio: "Coffee lover and weekend explorer ☕",
+    interests: ["Travel", "Photography", "Music"],
+    image: "https://i.pravatar.cc/500?img=12",
+  },
+  {
+    name: "Ananya",
+    age: 22,
+    bio: "Finding happiness in little things 🌸",
+    interests: ["Reading", "Art", "Dancing"],
+    image: "https://i.pravatar.cc/500?img=47",
+  },
+  {
+    name: "Rohan",
+    age: 24,
+    bio: "Tech enthusiast and fitness lover",
+    interests: ["Technology", "Fitness", "Movies"],
+    image: "https://i.pravatar.cc/500?img=13",
+  },
+  {
+    name: "Meera",
+    age: 21,
+    bio: "Exploring the world one trip at a time ✈️",
+    interests: ["Travel", "Food", "Music"],
+    image: "https://i.pravatar.cc/500?img=44",
+  },
+  {
+    name: "Aditya",
+    age: 25,
+    bio: "Football, coding and good conversations",
+    interests: ["Football", "Coding", "Gaming"],
+    image: "https://i.pravatar.cc/500?img=14",
+  },
+  {
+    name: "Isha",
+    age: 23,
+    bio: "Art is my way of expressing myself 🎨",
+    interests: ["Painting", "Books", "Nature"],
+    image: "https://i.pravatar.cc/500?img=49",
+  },
+  {
+    name: "Kabir",
+    age: 22,
+    bio: "Always up for an adventure",
+    interests: ["Hiking", "Photography", "Travel"],
+    image: "https://i.pravatar.cc/500?img=15",
+  },
+  {
+    name: "Diya",
+    age: 24,
+    bio: "Music makes everything better 🎶",
+    interests: ["Singing", "Music", "Dance"],
+    image: "https://i.pravatar.cc/500?img=45",
+  },
+  {
+    name: "Arjun",
+    age: 26,
+    bio: "Living life one day at a time",
+    interests: ["Cricket", "Fitness", "Travel"],
+    image: "https://i.pravatar.cc/500?img=16",
+  },
+  {
+    name: "Sneha",
+    age: 22,
+    bio: "Bookworm with big dreams 📚",
+    interests: ["Reading", "Writing", "Coffee"],
+    image: "https://i.pravatar.cc/500?img=48",
+  },
+  {
+    name: "Vikram",
+    age: 25,
+    bio: "Building things and chasing sunsets",
+    interests: ["Coding", "Photography", "Movies"],
+    image: "https://i.pravatar.cc/500?img=17",
+  },
+  {
+    name: "Priya",
+    age: 23,
+    bio: "Foodie by heart ❤️",
+    interests: ["Cooking", "Food", "Travel"],
+    image: "https://i.pravatar.cc/500?img=46",
+  },
+  {
+    name: "Karthik",
+    age: 24,
+    bio: "Sports keep me going",
+    interests: ["Badminton", "Football", "Fitness"],
+    image: "https://i.pravatar.cc/500?img=18",
+  },
+  {
+    name: "Nisha",
+    age: 21,
+    bio: "Nature lover and dreamer 🌿",
+    interests: ["Nature", "Gardening", "Art"],
+    image: "https://i.pravatar.cc/500?img=50",
+  },
+  {
+    name: "Rahul",
+    age: 27,
+    bio: "Making memories everywhere",
+    interests: ["Travel", "Movies", "Music"],
+    image: "https://i.pravatar.cc/500?img=19",
+  },
+  {
+    name: "Tara",
+    age: 22,
+    bio: "Dancing through life 💃",
+    interests: ["Dance", "Fashion", "Music"],
+    image: "https://i.pravatar.cc/500?img=51",
+  },
+  {
+    name: "Dev",
+    age: 24,
+    bio: "Curious mind, creative soul",
+    interests: ["Design", "Technology", "Gaming"],
+    image: "https://i.pravatar.cc/500?img=20",
+  },
+  {
+    name: "Riya",
+    age: 23,
+    bio: "Smiles, sunshine and coffee",
+    interests: ["Coffee", "Books", "Travel"],
+    image: "https://i.pravatar.cc/500?img=52",
+  },
+  {
+    name: "Manav",
+    age: 26,
+    bio: "Gym enthusiast and foodie",
+    interests: ["Fitness", "Cooking", "Cricket"],
+    image: "https://i.pravatar.cc/500?img=21",
+  },
+  {
+    name: "Aditi",
+    age: 22,
+    bio: "Creating memories through my lens 📸",
+    interests: ["Photography", "Travel", "Art"],
+    image: "https://i.pravatar.cc/500?img=53",
+  },
+  {
+    name: "Sahil",
+    age: 25,
+    bio: "Adventure is out there",
+    interests: ["Hiking", "Cycling", "Travel"],
+    image: "https://i.pravatar.cc/500?img=22",
+  },
+  {
+    name: "Pooja",
+    age: 24,
+    bio: "A little bit of everything",
+    interests: ["Music", "Food", "Reading"],
+    image: "https://i.pravatar.cc/500?img=54",
+  },
+  {
+    name: "Nikhil",
+    age: 23,
+    bio: "Developer during the day, gamer at night",
+    interests: ["Coding", "Gaming", "Movies"],
+    image: "https://i.pravatar.cc/500?img=23",
+  },
+  {
+    name: "Kavya",
+    age: 21,
+    bio: "Collecting moments, not things",
+    interests: ["Travel", "Dance", "Photography"],
+    image: "https://i.pravatar.cc/500?img=55",
+  },
+  {
+    name: "Varun",
+    age: 26,
+    bio: "Passionate about sports and technology",
+    interests: ["Cricket", "Technology", "Fitness"],
+    image: "https://i.pravatar.cc/500?img=24",
+  },
+  {
+    name: "Maya",
+    age: 23,
+    bio: "Art, coffee and endless conversations",
+    interests: ["Painting", "Coffee", "Books"],
+    image: "https://i.pravatar.cc/500?img=56",
+  },
+  {
+    name: "Rishi",
+    age: 24,
+    bio: "Music is my escape 🎧",
+    interests: ["Music", "Guitar", "Travel"],
+    image: "https://i.pravatar.cc/500?img=25",
+  },
+  {
+    name: "Sana",
+    age: 22,
+    bio: "Always curious, always learning",
+    interests: ["Reading", "Technology", "Nature"],
+    image: "https://i.pravatar.cc/500?img=57",
+  },
+  {
+    name: "Akash",
+    age: 25,
+    bio: "Chasing goals and good vibes",
+    interests: ["Fitness", "Football", "Travel"],
+    image: "https://i.pravatar.cc/500?img=26",
+  },
+  {
+    name: "Neha",
+    age: 23,
+    bio: "Making every day colorful 🌈",
+    interests: ["Art", "Fashion", "Music"],
+    image: "https://i.pravatar.cc/500?img=58",
+  },
+];
+
+async function seedProfiles() {
+  try {
+    await mongoose.connect(process.env.MONGO_URI);
+
+    await Profile.deleteMany({});
+await Swipe.deleteMany({});
+
+const insertedProfiles = await Profile.insertMany(profiles);
+
+// Create 3 mock incoming Likes for the current user
+const incomingLikes = [
+  {
+    swiperId: insertedProfiles[0]._id.toString(),
+    targetId: "current-user",
+    action: "like",
+  },
+  {
+    swiperId: insertedProfiles[1]._id.toString(),
+    targetId: "current-user",
+    action: "like",
+  },
+  {
+    swiperId: insertedProfiles[2]._id.toString(),
+    targetId: "current-user",
+    action: "like",
+  },
+];
+
+await Swipe.insertMany(incomingLikes);
+
+console.log(`${profiles.length} profiles inserted successfully!`);
+console.log("3 mock incoming Likes created successfully!");
+    await mongoose.connection.close();
+  } catch (error) {
+    console.error("Seeding failed:", error.message);
+    await mongoose.connection.close();
+    process.exit(1);
+  }
+}
+
+seedProfiles();
