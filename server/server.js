@@ -35,6 +35,11 @@ app.get("/feed", async (req, res) => {
     const swipedIds = swipedProfiles.map(
       (swipe) => swipe.targetId
     );
+    const totalProfiles = await Profile.countDocuments();
+
+console.log("Current User:", CURRENT_USER_ID);
+console.log("Total Profiles in Database:", totalProfiles);
+console.log("Profiles Already Swiped:", swipedIds.length);
 
     const profiles = await Profile.find({
       _id: { $nin: swipedIds },
@@ -161,33 +166,32 @@ app.get("/matches", async (req, res) => {
       }
     }
 
-    res.status(200).json({
-      success: true,
-      count: matches.length,
-      matches: matches,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to fetch matches.",
-      error: error.message,
-    });
-  }
+ 
+res.status(200).json({
+  success: true,
+  count: matches.length,
+  matches: matches,
 });
-
-
+} catch (error) {
+  res.status(500).json({
+    success: false,
+    message: "Failed to fetch matches.",
+    error: error.message,
+  });
+}
+});
 
 // MongoDB Atlas connection
 mongoose
-    .connect(process.env.MONGO_URI)
-    .then(() => {
-        console.log("MongoDB Atlas connected successfully!");
+  .connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log("MongoDB Atlas connected successfully!");
 
-        app.listen(process.env.PORT || 5000, () => {
-            console.log("Server running on port 5000");
-        });
-    })
-    .catch((error) => {
-        console.error("MongoDB connection failed:", error.message);
-        process.exit(1);
+    app.listen(process.env.PORT || 5000, () => {
+      console.log("Server running on port 5000");
     });
+  })
+  .catch((error) => {
+    console.error("MongoDB connection failed:", error.message);
+    process.exit(1);
+  });
